@@ -58,6 +58,11 @@ else:
 st.subheader("⬇️ Download Your Inventory")
 download_df = pd.DataFrame(st.session_state.inventory)
 download_df = download_df[["name", "qty", "low", "category", "timestamp"]]  # Remove 'id' before download
+
+# Format timestamp column
+download_df['timestamp'] = pd.to_datetime(download_df['timestamp']).dt.strftime('%m/%d/%Y %H:%M')
+
+# Generate CSV
 download_csv = download_df.to_csv(index=False).encode('utf-8')
 st.download_button(
     label="Download CSV",
