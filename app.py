@@ -30,7 +30,7 @@ if submit and item_name:
         "qty": quantity,
         "low": low_threshold,
         "category": category,
-        "timestamp": datetime.now()
+        "timestamp": datetime.now().strftime('%m/%d/%Y %H:%M')  # Format timestamp when item is created
     }
     st.session_state.inventory.append(item)
     st.success(f"✅ {item_name} added!")
@@ -56,20 +56,16 @@ else:
 
 # --- Download Button ---
 st.subheader("⬇️ Download Your Inventory")
-download_df = pd.DataFrame(st.session_state.inventory)
-download_df = download_df[["name", "qty", "low", "category", "timestamp"]]  # Remove 'id' before download
-
-# Format timestamp column
-download_df['timestamp'] = pd.to_datetime(download_df['timestamp']).dt.strftime('%m/%d/%Y %H:%M')
-
-# Generate CSV
-download_csv = download_df.to_csv(index=False).encode('utf-8')
-st.download_button(
-    label="Download CSV",
-    data=download_csv,
-    file_name="pantry_inventory.csv",
-    mime="text/csv"
-)
+if st.session_state.inventory:
+    download_df = pd.DataFrame(st.session_state.inventory)
+    download_df = download_df[["name", "qty", "low", "category", "timestamp"]]  # Only export selected columns
+    download_csv = download_df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="Download CSV",
+        data=download_csv,
+        file_name="pantry_inventory.csv",
+        mime="text/csv"
+    )
 
 # --- Future Features ---
 st.markdown("""
